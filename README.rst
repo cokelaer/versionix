@@ -62,6 +62,7 @@ Key features
 - 🐍 **Pure Python** — no compiled dependencies; works on any platform
 - ⚡ **Fast** — single subprocess call, minimal overhead
 - 🔗 **Library API** — importable ``get_version()`` function for use in your own code
+- 📦 **Container support** — introspect versions from Singularity/Apptainer or Docker containers
 
 Installation
 ============
@@ -98,6 +99,25 @@ Full help::
 .. image:: doc/versionix_usage.png
    :alt: versionix --help output
 
+Container introspection
+-----------------------
+
+You can retrieve the version of a tool that is packaged inside a container
+without running the tool locally, using the ``--from`` option.
+
+**Singularity / Apptainer images** (``.img`` or ``.sif`` files)::
+
+    versionix sniffles --from sniffles_2.7.3.img
+    versionix fastqc --from fastqc.sif
+
+If ``apptainer`` is available it is preferred over ``singularity``; both are
+tried automatically.
+
+**Docker images**::
+
+    versionix fastqc --from fastqc:latest
+    versionix samtools --from biocontainers/samtools:1.17
+
 Python API
 ----------
 
@@ -107,6 +127,16 @@ You can also call ``get_version`` directly from Python::
 
     version = get_version("fastqc")
     print(version)  # e.g. "0.11.9"
+
+Pass a ``container`` argument to introspect a tool inside a container::
+
+    from versionix.parser import get_version
+
+    # From a Singularity/Apptainer image file
+    version = get_version("sniffles", container="sniffles_2.7.3.img")
+
+    # From a Docker image
+    version = get_version("fastqc", container="fastqc:latest")
 
 How it works
 ============
